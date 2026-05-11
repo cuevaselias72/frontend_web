@@ -25,7 +25,7 @@ export default function HomePage() {
     }
 
     if (user?.rol.nombre_rol === 'Alumno') {
-      router.replace('/student');
+      router.replace('/mis_calificaciones');
     }
   }, [isAuthenticated, user, router]);
 

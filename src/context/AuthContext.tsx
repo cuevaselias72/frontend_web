@@ -23,8 +23,9 @@ interface AuthContextProps {
   user: AuthData['user'] | null;
   token: string | null;
   loading: boolean;
-  login: (payload: LoginPayload) => Promise<void>;
+  login: (payload: LoginPayload) => Promise<AuthData['user']>; 
   logout: () => Promise<void>;
+
   isAuthenticated: boolean;
 }
 
@@ -53,14 +54,17 @@ export function AuthProvider({
     setLoading(false);
   }, []);
 
+  // src/context/AuthContext.tsx
   async function login(payload: LoginPayload) {
     const response = await loginService(payload);
 
     setToken(response.data.token);
     setUser(response.data.user);
 
-    Cookies.set('token', response.data.token, { expires: 7 }); 
+    Cookies.set('token', response.data.token, { expires: 7 });
     Cookies.set('user', JSON.stringify(response.data.user), { expires: 7 });
+
+    return response.data.user; 
   }
 
   async function logout() {

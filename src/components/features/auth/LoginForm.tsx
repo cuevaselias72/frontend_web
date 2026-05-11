@@ -26,16 +26,18 @@ export default function LoginForm() {
 
     try {
       setLoading(true);
-      setError('');
+    
+      const loggedUser = await login({ email, password });
+      const nombreRol = loggedUser?.rol?.nombre_rol?.toLowerCase();
 
-      await login({
-        email,
-        password,
-      });
-
-      router.push('/dashboard');
-    } catch {
-      setError('Credenciales incorrectas. Verifica tu email y contraseña.');
+      if (nombreRol === 'alumno') {
+        router.push('/mis_calificaciones');
+      } else {
+        router.push('/dashboard');
+      }
+    
+    } catch (err) {
+      setError('Credenciales incorrectas.');
     } finally {
       setLoading(false);
     }
@@ -60,7 +62,7 @@ export default function LoginForm() {
             alt="Logo"
             className="w-40 h-40 object-contain mb-6"
           />
-          <h1 className="text-3xl font-bold text-neutral-800">Login</h1>
+          <h1 className="text-3xl font-bold text-neutral-800">Sistema de Evaluaciones de Exposiciones</h1>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
