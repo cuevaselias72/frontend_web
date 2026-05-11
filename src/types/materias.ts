@@ -14,6 +14,10 @@ export interface CreateMateriaPayload {
   materia: string;
 }
 
+export interface UpdateMateriaPayload {
+  materia: string;
+}
+
 export type MateriasResponse = ApiResponse<Materia[]>;
 
 export type MateriaResponse = ApiResponse<Materia>;

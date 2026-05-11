@@ -1,24 +1,42 @@
 "use client";
 
-import { useState } from "react";
-import { createMateriaService } from "@/lib/services/materias.service";
+import { useState, useEffect } from "react";
+import {
+  createMateriaService,
+  updateMateriaService,
+} from "@/lib/services/materias.service";
 import { useAuth } from "@/context/AuthContext";
+import type { Materia } from "@/types/materias";
 
 interface MateriasFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  initialData?: Materia | null; // <-- Añadimos esto para saber si estamos editando
 }
 
 export function MateriasForm({
   isOpen,
   onClose,
   onSuccess,
+  initialData,
 }: MateriasFormProps) {
   const { token } = useAuth();
   const [materiaName, setMateriaName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Sincronizamos el estado local cuando se abre el modal o cambia el initialData
+  useEffect(() => {
+    if (isOpen) {
+      if (initialData) {
+        setMateriaName(initialData.materia);
+      } else {
+        setMateriaName("");
+      }
+      setError(null);
+    }
+  }, [isOpen, initialData]);
 
   if (!isOpen) return null;
 
@@ -35,20 +53,29 @@ export function MateriasForm({
       setLoading(true);
       setError(null);
 
-      // Llamamos al servicio con el payload esperado { materia: string }
-      await createMateriaService({ materia: materiaName.trim() }, token);
+      const payload = { materia: materiaName.trim() };
+
+      if (initialData) {
+        // Si hay initialData, actualizamos
+        await updateMateriaService(initialData.id_materia, payload, token);
+      } else {
+        // Si no hay initialData, creamos
+        await createMateriaService(payload, token);
+      }
 
       setMateriaName("");
-      onSuccess(); // Refresca la lista de materias en la página principal
-      onClose(); // Cierra el modal
+      onSuccess();
+      onClose();
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Error al crear la materia",
+        err instanceof Error ? err.message : "Error al procesar la materia",
       );
     } finally {
       setLoading(false);
     }
   };
+
+  const isEditing = !!initialData;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
@@ -56,7 +83,7 @@ export function MateriasForm({
         <div className="p-8">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-2xl font-bold text-neutral-800">
-              Nueva Materia
+              {isEditing ? "Editar Materia" : "Nueva Materia"}
             </h3>
             <button
               onClick={onClose}
@@ -114,7 +141,7 @@ export function MateriasForm({
                 disabled={loading}
                 className="flex-1 px-6 py-3.5 bg-black text-white font-bold rounded-2xl hover:bg-neutral-800 transition-all active:scale-95 disabled:opacity-50 flex justify-center items-center gap-2"
               >
-                {loading ? "Guardando..." : "Crear"}
+                {loading ? "Guardando..." : isEditing ? "Actualizar" : "Crear"}
               </button>
             </div>
           </form>

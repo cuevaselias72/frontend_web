@@ -1,7 +1,7 @@
 import { API_URL } from "../api";
 import type {
   CreateMateriaPayload,
-  //   UpdateMateriaPayload,
+  UpdateMateriaPayload,
   MateriasResponse,
   MateriaResponse,
   CreateMateriaResponse,
@@ -73,28 +73,28 @@ export async function createMateriaService(
   return data;
 }
 
-// export async function updateMateriaService(
-//   id: number,
-//   payload: UpdateMateriaPayload,
-//   token: string,
-// ): Promise<MateriaResponse> {
-//   const response = await fetch(`${API_URL}/materias/${id}`, {
-//     method: "PUT",
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(payload),
-//   });
+export async function updateMateriaService(
+  id: number,
+  payload: UpdateMateriaPayload,
+  token: string,
+): Promise<MateriaResponse> {
+  const response = await fetch(`${API_URL}/materias/${id}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
 
-//   const data = await response.json();
+  const data = await response.json();
 
-//   if (!response.ok) {
-//     throw new Error(data.message || "Error al actualizar la materia");
-//   }
+  if (!response.ok) {
+    throw new Error(data.message || "Error al actualizar la materia");
+  }
 
-//   return data;
-// }
+  return data;
+}
 
 export async function deleteMateriaService(
   id: number,

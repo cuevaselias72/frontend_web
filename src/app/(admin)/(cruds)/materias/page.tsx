@@ -17,10 +17,13 @@ export default function MateriasPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Estados para el Modal de Confirmación
+  // Estados para modales
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
+
+  // Estados para saber qué elemento estamos editando o eliminando
   const [subjectToDelete, setSubjectToDelete] = useState<number | null>(null);
+  const [materiaToEdit, setMateriaToEdit] = useState<Materia | null>(null);
 
   async function fetchData() {
     if (!token) return;
@@ -29,8 +32,6 @@ export default function MateriasPage() {
       setLoading(true);
       const response = await getMateriasService(token);
 
-      // Según materias.ts: MateriasResponse = ApiResponse<Materia[]>
-      // Y ApiResponse tiene la propiedad .data
       if (response.success) {
         setMaterias(response.data);
       }
@@ -45,9 +46,16 @@ export default function MateriasPage() {
     if (token) fetchData();
   }, [token]);
 
-  const handleEdit = (id: number) => {
-    console.log("Navegando a edición de materia:", id);
-    // Aquí podrías usar router.push(`/dashboard/materias/edit/${id}`)
+  // Al dar clic en editar, guardamos la materia completa y abrimos el modal
+  const handleEdit = (materia: Materia) => {
+    setMateriaToEdit(materia);
+    setIsFormOpen(true);
+  };
+
+  // Función para abrir el modal de crear (limpiando si había algo para editar)
+  const handleCreateNew = () => {
+    setMateriaToEdit(null);
+    setIsFormOpen(true);
   };
 
   const openDeleteModal = (id: number) => {
@@ -80,7 +88,7 @@ export default function MateriasPage() {
           Gestión de Materias
         </h2>
         <button
-          onClick={() => setIsFormOpen(true)}
+          onClick={handleCreateNew}
           className="px-4 py-2 bg-black text-white rounded-xl hover:bg-neutral-800 transition-transform active:scale-95"
         >
           Nueva Materia
@@ -91,9 +99,9 @@ export default function MateriasPage() {
         {materias.map((materia) => (
           <CrudCard
             key={materia.id_materia}
-            title={materia.materia} // El nombre de la materia
+            title={materia.materia}
             details={[{ label: "ID", value: materia.id_materia }]}
-            onEdit={() => handleEdit(materia.id_materia)}
+            onEdit={() => handleEdit(materia)} // Pasamos la materia completa
             onDelete={() => openDeleteModal(materia.id_materia)}
           />
         ))}
@@ -101,8 +109,12 @@ export default function MateriasPage() {
 
       <MateriasForm
         isOpen={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
+        onClose={() => {
+          setIsFormOpen(false);
+          setMateriaToEdit(null); // Limpiamos el estado al cerrar
+        }}
         onSuccess={fetchData}
+        initialData={materiaToEdit} // Le pasamos los datos al form
       />
 
       <ConfirmationModal
