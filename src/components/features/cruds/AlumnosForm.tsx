@@ -202,39 +202,22 @@ export function AlumnosForm({
             </div>
 
             {/* Password */}
-            <div>
-              <label className="block mb-1.5 text-sm font-semibold text-neutral-700">
-                {isEditing ? "Nueva Contraseña (opcional)" : "Contraseña"}
-              </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder={
-                  isEditing
-                    ? "Dejar vacío para no cambiar"
-                    : "Mínimo 8 caracteres"
-                }
-                className="w-full rounded-2xl text-neutral-700 bg-neutral-50 border border-neutral-200 px-4 py-3 outline-none focus:ring-2 focus:ring-black/5 focus:border-neutral-400 transition-all"
-                required={!isEditing} // Solo es obligatorio al crear
-              />
-            </div>
-
-            {/* ID Rol */}
-            <div>
-              <label className="block mb-1.5 text-sm font-semibold text-neutral-700">
-                Rol ID
-              </label>
-              <input
-                type="number"
-                name="id_rol"
-                value={11}
-                onChange={handleChange}
-                className="w-full rounded-2xl bg-neutral-100 border border-neutral-200 px-4 py-3 text-neutral-500 cursor-not-allowed"
-                readOnly
-              />
-            </div>
+            {!isEditing && (
+              <div>
+                <label className="block mb-1.5 text-sm font-semibold text-neutral-700">
+                  Contraseña
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Mínimo 8 caracteres"
+                  className="w-full rounded-2xl text-neutral-700 bg-neutral-50 border border-neutral-200 px-4 py-3 outline-none focus:ring-2 focus:ring-black/5 focus:border-neutral-400 transition-all"
+                  required={!isEditing} // Solo es obligatorio si no se está editando
+                />
+              </div>
+            )}
 
             {error && (
               <div className="p-4 bg-red-50 rounded-2xl border border-red-100 text-sm text-red-600 font-medium text-center">

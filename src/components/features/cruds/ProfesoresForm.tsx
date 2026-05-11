@@ -161,21 +161,6 @@ export function ProfesoresForm({
                 required
               />
             </div>
-
-            {/* <div>
-              <label className="block mb-1.5 text-sm font-semibold text-neutral-700">
-                {isEditing ? "Nueva Contraseña (opcional)" : "Contraseña"}
-              </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Mínimo 8 caracteres"
-                className="w-full rounded-2xl bg-neutral-50 border border-neutral-200 px-4 py-3 outline-none focus:ring-2 focus:ring-black/5 focus:border-neutral-400 transition-all"
-                required={!isEditing}
-              />
-            </div> */}
             {/* Solo se muestra si NO estamos editando */}
             {!isEditing && (
               <div>
