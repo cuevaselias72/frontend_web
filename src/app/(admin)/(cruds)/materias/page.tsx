@@ -95,7 +95,7 @@ export default function MateriasPage() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {materias.map((materia) => (
           <CrudCard
             key={materia.id_materia}
@@ -126,5 +126,30 @@ export default function MateriasPage() {
         confirmText="Sí, eliminar"
       />
     </div>
+    // <div className="">
+    //   {" "}
+    //   {/* Contenedor padre que centra todo el contenido */}
+    //   {/* El encabezado también debería estar dentro para que se alinee con las tarjetas */}
+    //   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    //     <h2 className="text-3xl font-bold text-neutral-800 tracking-tight">
+    //       Gestión de Materias
+    //     </h2>
+    //     <button onClick={handleCreateNew} className="...">
+    //       Nueva Materia
+    //     </button>
+    //   </div>
+    //   {/* La Grid */}
+    //   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    //     {materias.map((materia) => (
+    //       <CrudCard
+    //         key={materia.id_materia}
+    //         title={materia.materia}
+    //         details={[{ label: "ID", value: materia.id_materia }]}
+    //         onEdit={() => handleEdit(materia)} // Pasamos la materia completa
+    //         onDelete={() => openDeleteModal(materia.id_materia)}
+    //       />
+    //     ))}
+    //   </div>
+    // </div>
   );
 }

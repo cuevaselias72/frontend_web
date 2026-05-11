@@ -99,7 +99,7 @@ export default function AlumnosPage() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {alumnos.length === 0 ? (
           <p className="text-neutral-500 italic">No hay alumnos registrados.</p>
         ) : (
