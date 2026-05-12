@@ -1,9 +1,9 @@
-import { ApiResponse, BasicUser } from './shared';
-import { Materia } from './materias';
+import { ApiResponse, BasicUser } from "./shared";
+import { Materia } from "./materias";
 
 export interface GrupoMaestro {
   id_usuario: number;
-  usuario: Pick<BasicUser, 'nombre'>;
+  usuario: Pick<BasicUser, "nombre">;
 }
 
 export interface Grupo {
@@ -18,7 +18,7 @@ export interface Grupo {
 
 export interface GrupoAlumno {
   id_usuario: number;
-  usuario: Pick<BasicUser, 'nombre'>;
+  usuario: Pick<BasicUser, "nombre">;
 }
 
 export interface GrupoDetails extends Grupo {
@@ -40,3 +40,7 @@ export type GruposResponse = ApiResponse<Grupo[]>;
 export type GrupoResponse = ApiResponse<GrupoDetails>;
 
 export type DeleteGrupoResponse = ApiResponse<[]>;
+
+export type CreateGrupoResponse = ApiResponse<Grupo>;
+
+export type InscribirAlumnosResponse = ApiResponse<GrupoDetails>;
