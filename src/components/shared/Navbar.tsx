@@ -16,7 +16,7 @@ const MENU_LINKS = {
   ],
   Maestro: [
     { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Mis Grupos', href: '/mis_grupos' },
+    { label: 'Materias', href: '/mis_materias' },
     { label: 'Rúbricas', href: '/rubricas' },
   ],
   Alumno: [
