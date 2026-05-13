@@ -12,6 +12,7 @@ import { OutlineButton } from '@/components/shared/FormElements';
 import { ExpoEvalCard } from '@/components/features/evaluaciones/ExposicionCard';
 import { FiltrosModal } from '@/components/features/evaluaciones/FilterModal';
 import { EvaluarModal } from '@/components/features/evaluaciones/EvaluarModal';
+import { AlertModal } from '@/components/shared/DefaultModals';
 
 export default function EvaluarExposicionesPage() {
   const { token, user } = useAuth(); 
@@ -34,6 +35,9 @@ export default function EvaluarExposicionesPage() {
   const [expoSeleccionada, setExpoSeleccionada] = useState<any>(null);
   const [criteriosActivos, setCriteriosActivos] = useState<any[]>([]);
   const [loadingCriterios, setLoadingCriterios] = useState(false);
+
+  const [globalError, setGlobalError] = useState({ isOpen: false, title: '', message: '' });
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -78,8 +82,13 @@ export default function EvaluarExposicionesPage() {
 
         setExposicionesUI(datosAdaptados);
 
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error cargando evaluaciones:", error);
+        setGlobalError({
+          isOpen: true,
+          title: 'Error de conexión',
+          message: error.message || 'No se pudieron cargar las evaluaciones. Por favor, recarga la página.'
+        });
       } finally {
         setLoading(false);
       }
@@ -125,9 +134,9 @@ export default function EvaluarExposicionesPage() {
 
       setIsEvaluarOpen(false);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error al guardar la evaluación", error);
-      alert("Hubo un error al guardar la calificación. Intenta de nuevo.");
+      setSaveError(error.message || "No se pudo guardar la evaluación. Revisa tu conexión e intenta de nuevo.");
     } finally {
       setIsSaving(false);
     }
@@ -270,6 +279,14 @@ export default function EvaluarExposicionesPage() {
         isLoadingCriterios={loadingCriterios}
         onSaveEvaluacion={saveEvaluacion}
         isSaving={isSaving}
+      />
+
+      <AlertModal 
+        isOpen={globalError.isOpen}
+        onClose={() => setGlobalError({ ...globalError, isOpen: false })}
+        title={globalError.title}
+        message={globalError.message}
+        btnText="Cerrar" 
       />
 
     </div>

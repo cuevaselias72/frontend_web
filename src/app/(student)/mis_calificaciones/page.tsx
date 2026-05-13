@@ -5,11 +5,14 @@ import { useAuth } from '@/context/AuthContext';
 import { getMisCalificacionesService, getEquipoDetalleService } from '@/lib/services/estudiante.service';
 import { CalificacionCard } from '@/components/features/mis_calificaciones/CalificacionCard';
 import { KpiCard } from '@/components/shared/KpiCard';
+import { AlertModal } from '@/components/shared/DefaultModals';
 
 export default function MisCalificacionesPage() {
   const { token } = useAuth();
   const [loading, setLoading] = useState(true);
   const [materiasUI, setMateriasUI] = useState<any[]>([]);
+
+  const [globalError, setGlobalError] = useState({ isOpen: false, title: '', message: '' });
 
   useEffect(() => {
     async function fetchData() {
@@ -50,7 +53,6 @@ export default function MisCalificacionesPage() {
           }
 
           equipo.exposiciones.forEach((expo: any) => {
-            
             const criteriosMap: Record<number, { nombre: string, total: number, count: number }> = {};
 
             expo.evaluaciones?.forEach((ev: any) => {
@@ -83,7 +85,6 @@ export default function MisCalificacionesPage() {
           });
         });
 
-        // 6. Calculamos el promedio general por materia
         const resultadoFinal = Object.values(materiasAgrupadas).map((mat: any) => {
           const sumaTotal = mat.exposiciones.reduce((acc: number, e: any) => acc + e.calificacionTotal, 0);
           return {
@@ -94,8 +95,13 @@ export default function MisCalificacionesPage() {
 
         setMateriasUI(resultadoFinal);
 
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error al cargar calificaciones:", error);
+        setGlobalError({
+          isOpen: true,
+          title: 'Error al cargar',
+          message: error.message || 'No pudimos obtener tus calificaciones. Por favor, revisa tu conexión e intenta más tarde.'
+        });
       } finally {
         setLoading(false);
       }
@@ -161,6 +167,13 @@ export default function MisCalificacionesPage() {
           </div>
         )}
       </div>
+
+      <AlertModal 
+        isOpen={globalError.isOpen}
+        onClose={() => setGlobalError({ ...globalError, isOpen: false })}
+        title={globalError.title}
+        message={globalError.message}
+      />
 
     </div>
   );
