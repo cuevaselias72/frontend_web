@@ -24,6 +24,7 @@ import type { Maestro } from "@/types/maestros";
 export default function DashboardPage() {
   const { token } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [materias, setMaterias] = useState<Materia[]>([]);
   const [alumnos, setAlumnos] = useState<Alumno[]>([]);
@@ -31,43 +32,46 @@ export default function DashboardPage() {
   const [maestros, setMaestros] = useState<Maestro[]>([]);
   const [gruposDetails, setGruposDetails] = useState<GrupoDetails[]>([]);
 
-  useEffect(() => {
+  const fetchDashboardData = async () => {
     if (!token) return;
+    try {
+      setLoading(true);
+      setError(null); // Limpiamos errores previos
 
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        // Cargamos las listas principales
-        const [matsRes, alumsRes, groupsRes, maesRes] = await Promise.all([
-          getMateriasService(token),
-          getAlumnosService(token),
-          getGruposService(token),
-          getMaestrosService(token),
-        ]);
+      const [matsRes, alumsRes, groupsRes, maesRes] = await Promise.all([
+        getMateriasService(token),
+        getAlumnosService(token),
+        getGruposService(token),
+        getMaestrosService(token),
+      ]);
 
-        if (matsRes.success) setMaterias(matsRes.data);
-        if (alumsRes.success) setAlumnos(alumsRes.data);
-        if (maesRes.success) setMaestros(maesRes.data);
+      if (matsRes.success) setMaterias(matsRes.data);
+      if (alumsRes.success) setAlumnos(alumsRes.data);
+      if (maesRes.success) setMaestros(maesRes.data);
 
-        if (groupsRes.success) {
-          setGrupos(groupsRes.data);
-          // Para obtener el conteo de alumnos por materia, necesitamos los detalles de cada grupo
-          const detailsPromises = groupsRes.data.map((g) =>
-            getGrupoService(g.id_grupo, token),
-          );
-          const detailsResults = await Promise.all(detailsPromises);
-          setGruposDetails(
-            detailsResults.filter((r) => r.success).map((r) => r.data),
-          );
-        }
-      } catch (err) {
-        console.error("Error al cargar datos del dashboard:", err);
-      } finally {
-        setLoading(false);
+      if (groupsRes.success) {
+        setGrupos(groupsRes.data);
+        const detailsPromises = groupsRes.data.map((g) =>
+          getGrupoService(g.id_grupo, token),
+        );
+        const detailsResults = await Promise.all(detailsPromises);
+        setGruposDetails(
+          detailsResults.filter((r) => r.success).map((r) => r.data),
+        );
       }
-    };
+    } catch (err) {
+      console.error("Error al cargar datos del dashboard:", err);
+      // Guardamos el error para mostrarlo en la UI
+      setError(
+        "No pudimos cargar los datos del panel de control. Por favor, verifica tu conexión.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
+  useEffect(() => {
+    fetchDashboardData();
   }, [token]);
 
   // 1. Histórico de Materias (Line Chart)
@@ -139,8 +143,90 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-100 text-neutral-500 font-medium">
-        Cargando datos del panel...
+      <div className="p-6 space-y-8 bg-neutral-50 min-h-screen">
+        {/* Encabezado Skeleton */}
+        <div className="animate-pulse">
+          <h2 className="text-2xl font-bold text-neutral-500 mb-2 animate-pulse">
+            Cargando Panel de Control Académico...
+          </h2>
+          <div className="h-4 bg-neutral-300 rounded w-96"></div>
+        </div>
+
+        {/* 1. Fila de KPIs Skeleton */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {[1, 2, 3].map((item) => (
+            <div
+              key={item}
+              className="bg-white p-6 rounded-xl border border-neutral-200 shadow-sm animate-pulse"
+            >
+              <div className="h-4 bg-neutral-300 rounded w-1/2 mb-4"></div>
+              <div className="h-10 bg-neutral-300 rounded w-1/3"></div>
+            </div>
+          ))}
+        </div>
+
+        {/* 2. Cuadrícula de Gráficas Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {[1, 2, 3, 4].map((item) => (
+            <div
+              key={item}
+              className="bg-white p-6 rounded-xl border border-neutral-200 shadow-sm h-80 flex flex-col animate-pulse"
+            >
+              <div className="h-6 bg-neutral-300 rounded w-1/3 mb-6"></div>
+              {/* Espacio que simula el área de la gráfica */}
+              <div className="flex-1 bg-neutral-100 rounded-lg w-full"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 bg-neutral-50 min-h-screen flex flex-col items-center justify-center">
+        <div className="max-w-md w-full bg-white border border-red-100 rounded-2xl p-8 text-center shadow-sm">
+          <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-50 mb-6">
+            <svg
+              className="h-8 w-8 text-red-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              ></path>
+            </svg>
+          </div>
+
+          <h3 className="text-xl font-bold text-neutral-800 mb-2">
+            Ocurrió un problema
+          </h3>
+          <p className="text-neutral-500 text-sm mb-8">{error}</p>
+
+          <button
+            onClick={fetchDashboardData}
+            className="w-full inline-flex justify-center items-center px-4 py-2.5 bg-neutral-900 text-white font-medium rounded-xl hover:bg-neutral-800 transition-colors active:scale-95 shadow-sm"
+          >
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
+            </svg>
+            Volver a intentar
+          </button>
+        </div>
       </div>
     );
   }

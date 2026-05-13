@@ -1,25 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ModalWrapper } from '@/components/shared/ModalWrapper';
 import { ModalDefaultBtn } from '@/components/shared/ModalButtons';
+import type { Materia } from '@/types/materias';
 
 interface FiltrosModalProps {
   isOpen: boolean;
   onClose: () => void;
   onApply: (materias: string[], estados: string[]) => void;
+  materiasDisponibles: Materia[]; 
 }
 
-export function FiltrosModal({ isOpen, onClose, onApply }: FiltrosModalProps) {
-  // Estados para guardar qué checkboxes están marcados
+export function FiltrosModal({ isOpen, onClose, onApply, materiasDisponibles }: FiltrosModalProps) {
   const [materiasSeleccionadas, setMateriasSeleccionadas] = useState<string[]>([]);
   const [estadosSeleccionados, setEstadosSeleccionados] = useState<string[]>([]);
 
-  // Opciones disponibles (luego podrían venir de tu API)
-  const opcionesMaterias = ['Topicos web', 'Gestión de proyectos', 'Desarrollo movil', 'Ciberseguridad'];
-  const opcionesEstados = ['Sin evaluar', 'Evaluado', 'En proceso'];
+  const opcionesEstados = ['Sin evaluar', 'Evaluado'];
 
-  // Función para marcar/desmarcar
   const toggleSelection = (item: string, listaActual: string[], setLista: (val: string[]) => void) => {
     if (listaActual.includes(item)) {
       setLista(listaActual.filter(i => i !== item));
@@ -39,18 +37,21 @@ export function FiltrosModal({ isOpen, onClose, onApply }: FiltrosModalProps) {
         
         <div className="space-y-3">
           <h4 className="font-semibold text-lg text-neutral-800">Materia</h4>
-          <div className="space-y-2">
-            {opcionesMaterias.map((mat) => (
-              <label key={mat} className="flex items-center gap-3 cursor-pointer">
+          <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
+            {materiasDisponibles.map((mat) => (
+              <label key={mat.id_materia} className="flex items-center gap-3 cursor-pointer">
                 <input 
                   type="checkbox" 
-                  checked={materiasSeleccionadas.includes(mat)}
-                  onChange={() => toggleSelection(mat, materiasSeleccionadas, setMateriasSeleccionadas)}
+                  checked={materiasSeleccionadas.includes(mat.materia)}
+                  onChange={() => toggleSelection(mat.materia, materiasSeleccionadas, setMateriasSeleccionadas)}
                   className="w-5 h-5 rounded border-neutral-300 text-neutral-800 focus:ring-neutral-800" 
                 />
-                <span className="text-neutral-700">{mat}</span>
+                <span className="text-neutral-700">{mat.materia}</span>
               </label>
             ))}
+            {materiasDisponibles.length === 0 && (
+              <p className="text-sm text-neutral-400">Cargando materias...</p>
+            )}
           </div>
         </div>
 
