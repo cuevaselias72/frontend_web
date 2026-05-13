@@ -74,3 +74,32 @@ export async function deleteEvaluacionService(
   if (!response.ok) throw new Error(data.message || 'Error al eliminar la evaluación');
   return data;
 }
+
+export async function getMisEvaluacionesPendientesService(token: string) {
+  const response = await fetch(`${API_URL}/mis-evaluaciones`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || 'Error al obtener tus evaluaciones pendientes');
+  return data;
+}
+
+
+export async function getRubricaService(id: number, token: string) {
+  const response = await fetch(`${API_URL}/rubricas/${id}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || 'Error al obtener la rúbrica');
+  return data;
+}
