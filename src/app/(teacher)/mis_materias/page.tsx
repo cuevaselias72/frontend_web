@@ -26,12 +26,10 @@ export default function MateriasProfesorPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Le agregamos un parámetro opcional para saber si es recarga de fondo
   const fetchMaterias = async (isBackgroundRefresh = false) => {
     if (!token) return;
     
     try {
-      // Solo mostramos la pantalla de carga completa si es la primera vez que entramos
       if (!isBackgroundRefresh) setLoading(true);
       
       const [responseGrupos, responseEquipos] = await Promise.all([
@@ -79,13 +77,10 @@ export default function MateriasProfesorPage() {
 
       const nuevasMaterias = Object.values(materiasAgrupadas);
 
-      // ✨ LA MAGIA ESTÁ AQUÍ: "Memoria de estado"
-      // Antes de actualizar, revisamos si ya habíamos cargado alumnos antes
       setMaterias(prevMaterias => {
         return nuevasMaterias.map(nuevaMateria => {
           const materiaVieja = prevMaterias.find(m => m.id_materia === nuevaMateria.id_materia);
 
-          // Si la materia ya estaba expandida y cargada, le "heredamos" los datos
           if (materiaVieja && materiaVieja.detallesCargados) {
             const gruposConAlumnosGuardados = nuevaMateria.grupos.map((nuevoGrupo: any) => {
               const grupoViejo = materiaVieja.grupos.find((g: any) => g.id_grupo === nuevoGrupo.id_grupo);
@@ -97,7 +92,7 @@ export default function MateriasProfesorPage() {
 
             return {
               ...nuevaMateria,
-              detallesCargados: true, // Mantenemos la bandera para que no diga "Cargando..."
+              detallesCargados: true, 
               alumnos_count: materiaVieja.alumnos_count,
               grupos: gruposConAlumnosGuardados
             };
@@ -115,7 +110,7 @@ export default function MateriasProfesorPage() {
   };
 
   useEffect(() => {
-    fetchMaterias(false); // Falso porque es la carga inicial
+    fetchMaterias(false); 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, user]);
 
@@ -175,23 +170,27 @@ export default function MateriasProfesorPage() {
     if (tipo === 'exposicion') setIsPresentationFormOpen(true);
   };
 
-  // Función para recargar datos "en el fondo" sin pantalla de carga cuando cerramos un modal
   const handleSuccessModal = () => {
     fetchMaterias(true); 
   };
 
   if (loading) {
-    return <div className="p-6 text-neutral-500 animate-pulse font-medium">Cargando tus materias...</div>;
+    return (
+      <div className="p-6 flex flex-col space-y-4">
+        <div className="w-10 h-10 border-4 border-neutral-200 border-t-black rounded-full animate-spin"></div>
+        <p className="text-black font-bold">Cargando tus materias...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="p-6 text-red-500 font-medium">Error: {error}</div>;
+    return <div className="p-6 text-red-500 font-bold">Error: {error}</div>;
   }
 
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-bold text-neutral-800 tracking-tight">Materias</h2>
+        <h2 className="text-3xl font-bold text-black tracking-tight">Materias</h2>
       </div>
 
       <div className="w-full md:w-1/2">
@@ -200,14 +199,14 @@ export default function MateriasProfesorPage() {
 
       <div className="space-y-4">
         {materiasFiltradas.length === 0 ? (
-           <p className="text-neutral-500 p-4">No se encontraron materias.</p>
+           <p className="text-black font-medium p-4">No se encontraron materias.</p>
         ) : (
           materiasFiltradas.map((materia) => (
             <div key={materia.id_materia} className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm transition-all">
               <div className="p-5 flex justify-between items-center bg-neutral-50">
                 <div>
-                  <h3 className="text-xl font-bold text-neutral-800">{materia.nombre}</h3>
-                  <p className="text-sm text-neutral-500 mt-1">
+                  <h3 className="text-xl font-bold text-black">{materia.nombre}</h3>
+                  <p className="text-sm text-black font-medium mt-1">
                     Grupos: {materia.grupos_count ?? (materia.grupos?.length || 0)}
                   </p>
                 </div>
@@ -221,9 +220,9 @@ export default function MateriasProfesorPage() {
                   {materia.grupos && materia.grupos.map((grupo: any) => (
                     <div key={grupo.id_grupo} className="space-y-3">
                       <div className="flex justify-between items-end border-b border-neutral-100 pb-2">
-                        <h4 className="font-semibold text-lg text-neutral-700">
+                        <h4 className="font-bold text-lg text-black">
                           {grupo.nombre || grupo.grupo} 
-                          <span className="text-sm font-normal text-neutral-500 ml-4">
+                          <span className="text-sm font-bold text-black ml-4">
                             Alumnos: {!materia.detallesCargados ? 'Cargando...' : grupo.alumnos_count}
                           </span>
                         </h4>
@@ -233,26 +232,26 @@ export default function MateriasProfesorPage() {
                       </div>
 
                       <div className="overflow-x-auto rounded-lg border border-neutral-300">
-                        <table className="w-full text-sm text-left">
-                          <thead className="bg-neutral-200 text-neutral-700">
+                        <table className="w-full text-sm text-left text-black">
+                          <thead className="bg-neutral-200">
                             <tr>
-                              <th className="px-4 py-2 font-semibold border-b border-neutral-300">Equipos</th>
-                              <th className="px-4 py-2 font-semibold border-b border-neutral-300">Integrantes</th>
-                              <th className="px-4 py-2 font-semibold border-b border-neutral-300">Exposiciones</th>
+                              <th className="px-4 py-2 font-bold border-b border-neutral-300">Equipos</th>
+                              <th className="px-4 py-2 font-bold border-b border-neutral-300">Integrantes</th>
+                              <th className="px-4 py-2 font-bold border-b border-neutral-300">Exposiciones</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-neutral-200">
                             {grupo.equipos && grupo.equipos.length > 0 ? (
                               grupo.equipos.map((equipo: any) => (
                                 <tr key={equipo.id_equipo || equipo.id} className="hover:bg-neutral-50">
-                                  <td className="px-4 py-2">{equipo.nombre || equipo.equipo}</td>
+                                  <td className="px-4 py-2 font-medium">{equipo.nombre || equipo.equipo}</td>
                                   <td className="px-4 py-2">
-                                    <button onClick={() => handleAbrirModal('integrantes', equipo)} className="text-blue-600 hover:underline border border-neutral-300 px-2 py-1 rounded-md text-xs bg-white transition-colors">
+                                    <button onClick={() => handleAbrirModal('integrantes', equipo)} className="text-blue-600 font-bold hover:underline border border-neutral-300 px-2 py-1 rounded-md text-xs bg-white transition-colors">
                                       Ver integrantes
                                     </button>
                                   </td>
                                   <td className="px-4 py-2">
-                                    <button onClick={() => handleAbrirModal('exposicion', equipo)} className="text-blue-600 hover:underline border border-neutral-300 px-2 py-1 rounded-md text-xs bg-white transition-colors">
+                                    <button onClick={() => handleAbrirModal('exposicion', equipo)} className="text-blue-600 font-bold hover:underline border border-neutral-300 px-2 py-1 rounded-md text-xs bg-white transition-colors">
                                       Ver Exposiciones
                                     </button>
                                   </td>
@@ -260,7 +259,7 @@ export default function MateriasProfesorPage() {
                               ))
                             ) : (
                               <tr>
-                                <td colSpan={3} className="px-4 py-4 text-center text-neutral-500 italic">No hay equipos en este grupo.</td>
+                                <td colSpan={3} className="px-4 py-4 text-center text-black font-medium italic">No hay equipos en este grupo.</td>
                               </tr>
                             )}
                           </tbody>
@@ -270,7 +269,7 @@ export default function MateriasProfesorPage() {
                   ))}
                   
                   {(!materia.grupos || materia.grupos.length === 0) && (
-                    <p className="text-neutral-500 text-center py-4 text-sm">No hay grupos asignados a esta materia.</p>
+                    <p className="text-black font-medium text-center py-4 text-sm">No hay grupos asignados a esta materia.</p>
                   )}
                 </div>
               )}
