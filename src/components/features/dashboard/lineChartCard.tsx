@@ -19,7 +19,7 @@ export function LineChartCard({
       <div className="flex-1 w-full min-h-62.5">
         <LineChart
           xAxis={[{ data: xAxisData, scaleType: "point" }]}
-          series={[{ data: seriesData, curve: "linear", color: "#3b82f6" }]} // Azul de Tailwind
+          series={[{ data: seriesData, curve: "linear", color: "#737373" }]} // Neutral-800 de Tailwind
           margin={{ top: 10, bottom: 20, left: 30, right: 10 }}
         />
       </div>

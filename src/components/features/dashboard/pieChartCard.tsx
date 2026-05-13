@@ -13,6 +13,14 @@ export function PieChartCard({ title, data }: PieChartCardProps) {
       <p className="text-sm text-neutral-500 font-medium mb-4">{title}</p>
       <div className="flex-1 w-full min-h-62.5 flex justify-center items-center">
         <PieChart
+          colors={[
+            "#404040",
+            "#737373",
+            "#b8b6b6",
+            "#d4d4d4",
+            "#e5e5e5",
+            "#f5f5f5",
+          ]} // Escala de grises (neutral-800 a 400)
           series={[
             {
               data,
