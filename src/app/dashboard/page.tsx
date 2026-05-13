@@ -139,8 +139,41 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-100 text-neutral-500 font-medium">
-        Cargando datos del panel...
+      <div className="p-6 space-y-8 bg-neutral-50 min-h-screen">
+        {/* Encabezado Skeleton */}
+        <div className="animate-pulse">
+          <h2 className="text-2xl font-bold text-neutral-500 mb-2 animate-pulse">
+            Cargando Panel de Control Académico...
+          </h2>
+          <div className="h-4 bg-neutral-300 rounded w-96"></div>
+        </div>
+
+        {/* 1. Fila de KPIs Skeleton */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {[1, 2, 3].map((item) => (
+            <div
+              key={item}
+              className="bg-white p-6 rounded-xl border border-neutral-200 shadow-sm animate-pulse"
+            >
+              <div className="h-4 bg-neutral-300 rounded w-1/2 mb-4"></div>
+              <div className="h-10 bg-neutral-300 rounded w-1/3"></div>
+            </div>
+          ))}
+        </div>
+
+        {/* 2. Cuadrícula de Gráficas Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {[1, 2, 3, 4].map((item) => (
+            <div
+              key={item}
+              className="bg-white p-6 rounded-xl border border-neutral-200 shadow-sm h-80 flex flex-col animate-pulse"
+            >
+              <div className="h-6 bg-neutral-300 rounded w-1/3 mb-6"></div>
+              {/* Espacio que simula el área de la gráfica */}
+              <div className="flex-1 bg-neutral-100 rounded-lg w-full"></div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
