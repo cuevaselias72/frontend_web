@@ -20,6 +20,14 @@ export interface CreateRubricaPayload {
   }[];
 }
 
+export interface UpdateRubricaPayload {
+  rubrica?: string;
+  criterios?: {
+    descripcion: string;
+    porcentaje: number;
+  }[];
+}
+
 export type RubricasResponse = ApiResponse<Rubrica[]>;
 
 export type RubricaResponse = ApiResponse<Rubrica>;
