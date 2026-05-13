@@ -77,8 +77,40 @@ export default function AlumnosPage() {
     setAlumnoToEdit(null);
   };
 
-  if (loading)
-    return <div className="p-6 text-neutral-500">Cargando alumnos...</div>;
+  if (loading) {
+    return (
+      <div className="p-6 space-y-6">
+        {/* Encabezado Skeleton */}
+        <div className="flex justify-between items-center animate-pulse">
+          <h2 className="text-3xl font-bold text-neutral-500 tracking-tight animate-pulse">
+            Cargando Gestión de Alumnos..
+          </h2>
+          <div className="h-10 bg-neutral-300 rounded-xl w-36"></div>
+        </div>
+
+        {/* Cuadrícula de 9 Tarjetas Skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(9)].map((_, index) => (
+            <div
+              key={index}
+              className="bg-white p-6 rounded-xl border border-neutral-200 shadow-sm animate-pulse flex flex-col justify-between h-40"
+            >
+              <div>
+                <div className="h-6 bg-neutral-300 rounded w-3/4 mb-4"></div>
+                <div className="h-4 bg-neutral-300 rounded w-2/3 mb-2"></div>
+              </div>
+
+              <div className="flex justify-end gap-3 mt-4">
+                <div className="h-8 bg-neutral-200 rounded w-16"></div>
+                <div className="h-8 bg-neutral-200 rounded w-16"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   if (error) return <div className="p-6 text-red-500">Error: {error}</div>;
 
   return (
